@@ -13,6 +13,8 @@ GEM
     backport (1.1.2)
     benchmark (0.1.1)
     concurrent-ruby (1.1.8)
+    crack (0.4.5)
+      rexml
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.7.6)
@@ -22,6 +24,7 @@ GEM
       multipart-post (>= 1.2, < 3)
       ruby2_keywords
     faraday-net_http (1.0.1)
+    hashdiff (1.0.1)
     hashie (4.1.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
@@ -120,6 +123,10 @@ GEM
     unf_ext (0.0.7.7)
     unicode-display_width (2.0.0)
     vcr (6.0.0)
+    webmock (3.12.2)
+      addressable (>= 2.3.6)
+      crack (>= 0.3.2)
+      hashdiff (>= 0.4.0, < 2.0.0)
     yard (0.9.26)
     zeitwerk (2.4.2)
 
@@ -133,6 +140,7 @@ DEPENDENCIES
   sinatra
   solargraph
   vcr
+  webmock
 
 BUNDLED WITH
    2.2.14

@@ -1,0 +1,19 @@
+name: Update playlist
+
+on:
+  schedule:
+    - cron: "* 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+          bundler-cache: true
+      - name: Update playlist
+        run: bundle exec ruby update_playlist.rb
