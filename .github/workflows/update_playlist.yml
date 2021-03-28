@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  playlist:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -16,4 +16,9 @@ jobs:
           ruby-version: 2.6
           bundler-cache: true
       - name: Update playlist
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIFY_USER_CREDENTIALS: ${{ secrets.SPOTIFY_USER_CREDENTIALS }}
+          SPOTIFY_PLAYLIST: ${{ secrets.SPOTIFY_PLAYLIST }}
         run: bundle exec ruby update_playlist.rb
