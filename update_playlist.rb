@@ -86,7 +86,7 @@ end
 VCR.use_cassette('playlist_update') do
   RSpotify::authenticate(ENV['SPOTIFY_CLIENT_ID'], ENV['SPOTIFY_CLIENT_SECRET'])
   user = RSpotify::User.new(JSON.parse(Base64.decode64(ENV['SPOTIFY_USER_CREDENTIALS'])))
-  pp user.display_name
+  RSpotify::User.send(:refresh_token, user.id)
   puts "Emtpying playlist ..."
   while (playlist = RSpotify::Playlist.find(user.display_name, ENV['SPOTIFY_PLAYLIST'])).tracks.length > 0
     puts playlist.tracks.length
