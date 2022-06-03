@@ -39,7 +39,8 @@ class PlaylistDownloader
     res = Net::HTTP.get_response(uri)
     raise "Failed to fetch data: '#{res.code}' '#{res.body}'" unless res.is_a?(Net::HTTPSuccess)
 
-    JSON.parse(res.body).with_indifferent_access.fetch(:result).fetch(:entry)
+    sanitized = res.body.gsub(/,{[^}]*,,/, ",")
+    JSON.parse(sanitized).with_indifferent_access.fetch(:result).fetch(:entry)
   end
 end
 
