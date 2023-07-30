@@ -21,4 +21,6 @@ jobs:
           SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
           SPOTIFY_USER_CREDENTIALS: ${{ secrets.SPOTIFY_USER_CREDENTIALS }}
           SPOTIFY_PLAYLIST: ${{ secrets.SPOTIFY_PLAYLIST }}
+          DEEZER_PLAYLIST: ${{ secrets.DEEZER_PLAYLIST }}
+          DEEZER_TOKEN: ${{ secrets.DEEZER_TOKEN }}
         run: bundle exec ruby update_playlist.rb

@@ -12,3 +12,6 @@ gem 'dotenv'
 gem 'sinatra'
 gem 'vcr'
 gem 'webmock'
+gem "puma"
+gem 'omniauth-deezer'
+gem 'multi_json'
