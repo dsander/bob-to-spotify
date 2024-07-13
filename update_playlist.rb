@@ -133,6 +133,10 @@ class DeezerClient
       uri.query = URI.encode_www_form(params)
 
       res = Net::HTTP.get_response(uri)
+      if res.is_a?(Net::HTTPForbidden)
+        puts "Got HTTPForbidden, skipping"
+        return nil
+      end
       raise "Failed to fetch data: '#{res.code}' '#{res.body}'" unless res.is_a?(Net::HTTPSuccess)
 
       handle_response(res).map { |t| Track.new(t) }.first
