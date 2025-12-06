@@ -100,116 +100,116 @@ VCR.use_cassette('playlist_update') do
   end
 end
 
-class DeezerClient
-  class DeezerError < StandardError; end
+# class DeezerClient
+#   class DeezerError < StandardError; end
 
-  class Track
-    include Comparable
+#   class Track
+#     include Comparable
 
-    attr_reader :id, :title, :artist, :album, :link
+#     attr_reader :id, :title, :artist, :album, :link
 
-    def initialize(track)
-      @id = track.fetch(:id)
-      @title = track.fetch(:title)
-      @artist = track.fetch(:artist).fetch(:name)
-      @album = track.fetch(:album).fetch(:title)
-      @link = track.fetch(:link)
-    end
+#     def initialize(track)
+#       @id = track.fetch(:id)
+#       @title = track.fetch(:title)
+#       @artist = track.fetch(:artist).fetch(:name)
+#       @album = track.fetch(:album).fetch(:title)
+#       @link = track.fetch(:link)
+#     end
 
-    def hash
-      id
-    end
+#     def hash
+#       id
+#     end
 
-    def eql?(other)
-      id == other.id
-    end
-  end
+#     def eql?(other)
+#       id == other.id
+#     end
+#   end
 
-  class << self
-    def search(track:, artist:)
-      uri = URI('https://api.deezer.com/search')
-      # params = { q: "artist:\"#{artist}\" track:\"#{track}\"", limit: 1 }
-      params = { q: "#{artist} - #{track}", limit: 1 }
-      uri.query = URI.encode_www_form(params)
+#   class << self
+#     def search(track:, artist:)
+#       uri = URI('https://api.deezer.com/search')
+#       # params = { q: "artist:\"#{artist}\" track:\"#{track}\"", limit: 1 }
+#       params = { q: "#{artist} - #{track}", limit: 1 }
+#       uri.query = URI.encode_www_form(params)
 
-      res = Net::HTTP.get_response(uri)
-      if res.is_a?(Net::HTTPForbidden)
-        puts "Got HTTPForbidden, skipping"
-        return nil
-      end
-      raise "Failed to fetch data: '#{res.code}' '#{res.body}'" unless res.is_a?(Net::HTTPSuccess)
+#       res = Net::HTTP.get_response(uri)
+#       if res.is_a?(Net::HTTPForbidden)
+#         puts "Got HTTPForbidden, skipping"
+#         return nil
+#       end
+#       raise "Failed to fetch data: '#{res.code}' '#{res.body}'" unless res.is_a?(Net::HTTPSuccess)
 
-      handle_response(res).map { |t| Track.new(t) }.first
-    end
+#       handle_response(res).map { |t| Track.new(t) }.first
+#     end
 
-    def playlist_tracks
-      uri = URI("https://api.deezer.com/playlist/#{ENV['DEEZER_PLAYLIST']}/tracks")
-      uri.query = params
+#     def playlist_tracks
+#       uri = URI("https://api.deezer.com/playlist/#{ENV['DEEZER_PLAYLIST']}/tracks")
+#       uri.query = params
 
-      res = Net::HTTP.get_response(uri)
+#       res = Net::HTTP.get_response(uri)
 
-      handle_response(res).map { |t| Track.new(t) }
-    end
+#       handle_response(res).map { |t| Track.new(t) }
+#     end
 
-    def delete_tracks_from_playlist(tracks:)
-      return true if tracks.empty?
+#     def delete_tracks_from_playlist(tracks:)
+#       return true if tracks.empty?
 
-      uri = URI("https://api.deezer.com/playlist/#{ENV['DEEZER_PLAYLIST']}/tracks")
+#       uri = URI("https://api.deezer.com/playlist/#{ENV['DEEZER_PLAYLIST']}/tracks")
 
-      uri.query = params({ songs: tracks.map(&:id).join(',') })
-      res = Net::HTTP.new(uri.hostname).delete(uri.request_uri)
-      handle_response(res)
-    end
+#       uri.query = params({ songs: tracks.map(&:id).join(',') })
+#       res = Net::HTTP.new(uri.hostname).delete(uri.request_uri)
+#       handle_response(res)
+#     end
 
-    def set_playlist_tracks(tracks:)
-      uri = URI("https://api.deezer.com/playlist/#{ENV['DEEZER_PLAYLIST']}/tracks")
-      uri.query = params({ songs: tracks.map(&:id).join(',') })
+#     def set_playlist_tracks(tracks:)
+#       uri = URI("https://api.deezer.com/playlist/#{ENV['DEEZER_PLAYLIST']}/tracks")
+#       uri.query = params({ songs: tracks.map(&:id).join(',') })
 
-      res = Net::HTTP.post_form(uri, {})
-      handle_response(res)
-    end
+#       res = Net::HTTP.post_form(uri, {})
+#       handle_response(res)
+#     end
 
-    private
+#     private
 
-    def params(hash = {})
-      URI.encode_www_form(hash.merge(access_token: ENV.fetch("DEEZER_TOKEN")))
-    end
+#     def params(hash = {})
+#       URI.encode_www_form(hash.merge(access_token: ENV.fetch("DEEZER_TOKEN")))
+#     end
 
 
-    def handle_response(res)
-      raise DeezerError.new("Failed to fetch data: '#{res.code}' '#{res.body}'") unless res.is_a?(Net::HTTPSuccess)
+#     def handle_response(res)
+#       raise DeezerError.new("Failed to fetch data: '#{res.code}' '#{res.body}'") unless res.is_a?(Net::HTTPSuccess)
 
-      data = JSON.parse(res.body)
-      return data if data == true
-      data = data.with_indifferent_access
+#       data = JSON.parse(res.body)
+#       return data if data == true
+#       data = data.with_indifferent_access
 
-      raise DeezerError.new("#{data.dig(:error, :type)}: #{data.dig(:error, :message)}") if data.key?(:error)
+#       raise DeezerError.new("#{data.dig(:error, :type)}: #{data.dig(:error, :message)}") if data.key?(:error)
 
-      data.fetch(:data)
-    end
-  end
-end
+#       data.fetch(:data)
+#     end
+#   end
+# end
 
-tracks = []
-VCR.use_cassette('track_matching_deezer') do
-  entries.each do |entry|
-    puts "#{entry.airtime} - #{entry.artist} - #{entry.album} - #{entry.title}"
+# tracks = []
+# VCR.use_cassette('track_matching_deezer') do
+#   entries.each do |entry|
+#     puts "#{entry.airtime} - #{entry.artist} - #{entry.album} - #{entry.title}"
 
-    track = DeezerClient.search(track: entry.title, artist: entry.artist)
-    unless track
-      puts "Not found :("
-      puts "#{entry.airtime} - #{entry.artist} - #{entry.album} - #{entry.title}"
-    else
-      puts "#{entry.airtime} - #{track.artist} - #{track.album} - #{track.title}"
-      tracks << track
-    end
-  end
-end
+#     track = DeezerClient.search(track: entry.title, artist: entry.artist)
+#     unless track
+#       puts "Not found :("
+#       puts "#{entry.airtime} - #{entry.artist} - #{entry.album} - #{entry.title}"
+#     else
+#       puts "#{entry.airtime} - #{track.artist} - #{track.album} - #{track.title}"
+#       tracks << track
+#     end
+#   end
+# end
 
-puts "Emptying playlist ..."
-while (current_tracks = DeezerClient.playlist_tracks).length > 0
-  DeezerClient.delete_tracks_from_playlist(tracks: current_tracks)
-end
-tracks.uniq!
-puts 'Filling playlist ...'
-DeezerClient.set_playlist_tracks(tracks: tracks)
+# puts "Emptying playlist ..."
+# while (current_tracks = DeezerClient.playlist_tracks).length > 0
+#   DeezerClient.delete_tracks_from_playlist(tracks: current_tracks)
+# end
+# tracks.uniq!
+# puts 'Filling playlist ...'
+# DeezerClient.set_playlist_tracks(tracks: tracks)
