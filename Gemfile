@@ -15,3 +15,4 @@ gem 'webmock'
 gem "puma"
 gem 'omniauth-deezer'
 gem 'multi_json'
+gem "rackup"

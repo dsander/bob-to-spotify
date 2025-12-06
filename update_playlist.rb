@@ -206,7 +206,7 @@ VCR.use_cassette('track_matching_deezer') do
   end
 end
 
-puts "Emtpying playlist ..."
+puts "Emptying playlist ..."
 while (current_tracks = DeezerClient.playlist_tracks).length > 0
   DeezerClient.delete_tracks_from_playlist(tracks: current_tracks)
 end
