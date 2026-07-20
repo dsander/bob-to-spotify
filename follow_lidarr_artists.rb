@@ -60,9 +60,11 @@ def main
     name = artist['artistName']
     puts "Looking up Spotify artist for: #{name}"
 
-    spotify_url = artist.fetch("links").find { |link| link.fetch("name") == "spotify" }&.fetch("url")
+    spotify_artist_id = artist.fetch("links").filter_map do |link|
+      next unless link.fetch("name") == "spotify"
 
-    spotify_artist_id = spotify_url && URI(spotify_url).path.split('/').last
+      URI(link.fetch("url")).path.match(%r{\A/artist/([^/]+)/?\z})&.captures&.first
+    end.first
     spotify_artist_id ||= get_spotify_artist_id(name)
 
     if spotify_artist_id
